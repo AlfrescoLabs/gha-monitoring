@@ -1,4 +1,4 @@
-name: test-debug
+name: test-debug-with-tmate
 
 on:
   push:
