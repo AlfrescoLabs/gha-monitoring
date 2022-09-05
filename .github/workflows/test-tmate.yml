@@ -2,6 +2,12 @@ name: test-debug-with-tmate
 
 on:
   push:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: Enable SSH debug
+        required: false
+        default: "false"
 
 jobs:
   build:
@@ -9,7 +15,13 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Setup tmate session
+      # only when explicitly requested
+      if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
       uses: mxschmitt/action-tmate@v3
       with:
+        # provide access to SSH user that triggered the build
         limit-access-to-actor: true
-    - run: sleep 120
+      # automatically terminate after a timeout
+      timeout-minutes: 30
+    - name: Complex build command
+      run: sleep 120
