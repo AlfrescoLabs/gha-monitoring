@@ -19,3 +19,11 @@ To debug a build is necessary to add on-demand a step like:
 ```
 
 But you can also run the step on-demand with a manual build via `workflow_dispatch` event, see [example](../.github/workflows/test-tmate.yml).
+
+When executing that step, the job will block. If you want to continue with the following steps, just create a file named `continue` in the current workspace folder:
+
+```sh
+touch continue
+```
+
+Please be aware that when the last command of the job finish, also the tmate session will be terminated automatically.
