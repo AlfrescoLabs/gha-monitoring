@@ -12,3 +12,4 @@ jobs:
       uses: lhotari/action-upterm@v1
       with:
         limit-access-to-actor: true
+    - run: sleep 120
