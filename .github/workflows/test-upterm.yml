@@ -14,5 +14,4 @@ jobs:
       uses: lhotari/action-upterm@v1
       with:
         limit-access-to-actor: true
-    - name: Complex build command
-      run: sleep 120
+      timeout-minutes: 1
