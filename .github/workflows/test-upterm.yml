@@ -2,6 +2,8 @@ name: test-debug-with-upterm
 
 on:
   push:
+    branches:
+      - test-debug-ssh
 
 jobs:
   build:
@@ -12,4 +14,5 @@ jobs:
       uses: lhotari/action-upterm@v1
       with:
         limit-access-to-actor: true
-    - run: sleep 120
+    - name: Complex build command
+      run: sleep 120
