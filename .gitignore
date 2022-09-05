@@ -45,7 +45,7 @@ baseline.json
 .idea/
 *.iml
 *.iws
-/.vscode
+*.vscode
 .DS_Store
 target
 *.log.*
