@@ -1,6 +1,7 @@
-# Badge Generator
+# GHA Badge Generator
 
-`badge-generator` is a **reactive SVG badge generator for GitHub Actions workflows**, able to produce dynamically rendered build badges for both public and private GitHub repositories.
+`gha-badge-generator` is a **reactive SVG badge generator for GitHub Actions workflows**, able to produce dynamically rendered build badges for both public and private GitHub repositories.
+These badges differ from the standard GitHub Action badges, as they're actually honest when it comes down to the status of the most recent workflow.
 
 ## Configuration
 
