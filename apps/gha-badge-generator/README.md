@@ -4,7 +4,7 @@
 
 ## Configuration
 
-You must include the following properties in the [application.yml](https://github.com/dsibilio/badge-generator/blob/main/src/main/resources/config/application.yml) file:
+You must include the following properties in the [application.yml](https://github.com/AlfrescoLabs/gha-monitoring/blob/main/apps/gha-badge-generator/src/main/resources/config/application.yml) file:
 
 ```yaml
 github:
@@ -14,7 +14,7 @@ github:
 ## Usage
 
 Run the `gha-badge-generator` with `mvnw spring-boot:run`.
-Once the application is up and running, you can query the APIs specified in the [openapi.yaml specification file](https://github.com/dsibilio/badge-generator/blob/main/src/main/resources/openapi/openapi.yaml) in order to generate static/dynamic badges.
+Once the application is up and running, you can query the APIs specified in the [openapi.yaml specification file](https://github.com/AlfrescoLabs/gha-monitoring/blob/main/apps/gha-badge-generator/src/main/resources/openapi/openapi.yaml) in order to generate static/dynamic badges.
 
 ## Examples
 
