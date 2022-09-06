@@ -26,6 +26,11 @@ Once the application is up and running, you can query the APIs specified in the 
 
 `http://localhost:8080/badges/github/{owner}/{repository}/{workflowId}`
 
+The `workflowId` can either be the actual workflow id, or the name of the workflow file _(e.g.: `create-env.yml`)_.
+
+The default branch is `master`, you can also specify a different branch as follows:
+`http://localhost:8080/badges/github/{owner}/{repository}/{workflowId}?branch=develop`
+
 ## Testing
 
 Run the Unit Tests with `mvnw verify`. 
