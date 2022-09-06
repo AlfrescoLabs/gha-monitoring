@@ -30,8 +30,8 @@ public class BadgesDelegateImpl implements BadgesApiDelegate {
 
   @Override
   public Mono<ResponseEntity<Resource>> getGitHubWorkflowBadge(String owner, String repository, String workflowId,
-                                                               String branch, ServerWebExchange exchange) {
-    return withErrorHandling(badgeService.getWorkflowBadge(owner, repository, workflowId, branch)
+                                                               String branch, String label, ServerWebExchange exchange) {
+    return withErrorHandling(badgeService.getWorkflowBadge(owner, repository, workflowId, branch, label)
         .map(this::getResponse));
   }
 

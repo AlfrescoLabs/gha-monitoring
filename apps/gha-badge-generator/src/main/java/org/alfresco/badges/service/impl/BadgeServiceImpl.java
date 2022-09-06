@@ -33,13 +33,13 @@ public class BadgeServiceImpl implements BadgeService {
   }
 
   @Override
-  public Mono<String> getWorkflowBadge(String owner, String repository, String workflowId, String branch) {
+  public Mono<String> getWorkflowBadge(String owner, String repository, String workflowId, String branch, String label) {
     return gitHubWebClient.getWorkflowRuns(owner, repository, workflowId, branch)
-        .map(BadgeServiceImpl::buildWorkflowBadge);
+        .map(workflowRuns -> buildWorkflowBadge(workflowRuns, label));
   }
 
-  private static String buildWorkflowBadge(WorkflowRuns workflowRuns) {
-    String label = "Unknown";
+  private static String buildWorkflowBadge(WorkflowRuns workflowRuns, String label) {
+    String name = "Unknown";
     String message = "unknown";
     String status = "unknown";
     WorkflowRun lastWorkflowRun = workflowRuns.getWorkflow_runs()
@@ -48,13 +48,13 @@ public class BadgeServiceImpl implements BadgeService {
         .orElse(null);
 
     if (lastWorkflowRun != null) {
-      label = lastWorkflowRun.getName();
+      name = lastWorkflowRun.getName();
       status = lastWorkflowRun.getStatus();
-      message = lastWorkflowRun.getStatus() + (lastWorkflowRun.getConclusion() != null ? ": " + lastWorkflowRun.getConclusion() : "");
+      message = lastWorkflowRun.getConclusion() != null ? lastWorkflowRun.getConclusion() : lastWorkflowRun.getStatus();
     }
 
     BadgeFormat badgeFormat = new BadgeFormatBuilder(message)
-        .withLabel(label)
+        .withLabel(label != null ? label : name)
         .withLabelColor(io.github.dsibilio.badgemaker.model.NamedColor.GREY)
         .withMessageColor(getBadgeColor(status, lastWorkflowRun))
         .withLogo(GITHUB_LOGO)

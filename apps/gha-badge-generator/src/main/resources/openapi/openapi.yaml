@@ -78,6 +78,10 @@ paths:
           schema:
             type: string
             default: 'master'
+        - in: query
+          name: label
+          schema:
+            type: string
       responses:
         200:
           description: "The request has been accepted"
