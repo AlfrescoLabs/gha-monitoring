@@ -50,13 +50,13 @@ public class BadgeServiceImpl implements BadgeService {
     if (lastWorkflowRun != null) {
       label = lastWorkflowRun.getName();
       status = lastWorkflowRun.getStatus();
-      message = lastWorkflowRun.getStatus();
+      message = lastWorkflowRun.getStatus() + (lastWorkflowRun.getConclusion() != null ? ": " + lastWorkflowRun.getConclusion() : "");
     }
 
     BadgeFormat badgeFormat = new BadgeFormatBuilder(message)
         .withLabel(label)
         .withLabelColor(io.github.dsibilio.badgemaker.model.NamedColor.GREY)
-        .withMessageColor(getBadgeColor(status))
+        .withMessageColor(getBadgeColor(status, lastWorkflowRun))
         .withLogo(GITHUB_LOGO)
         .build();
 
@@ -68,9 +68,21 @@ public class BadgeServiceImpl implements BadgeService {
     return color != null ? io.github.dsibilio.badgemaker.model.NamedColor.valueOf(color.toString()) : defaultColor;
   }
 
-  private static io.github.dsibilio.badgemaker.model.NamedColor getBadgeColor(String status) {
+  private static io.github.dsibilio.badgemaker.model.NamedColor getBadgeColor(String status, WorkflowRun workflowRun) {
     return switch (status) {
-      case "completed", "success" -> io.github.dsibilio.badgemaker.model.NamedColor.BRIGHTGREEN;
+      case "completed" -> {
+        if (workflowRun == null) {
+          yield io.github.dsibilio.badgemaker.model.NamedColor.BRIGHTGREEN;
+        } else {
+          yield switch (workflowRun.getConclusion()) {
+            case "success" -> io.github.dsibilio.badgemaker.model.NamedColor.BRIGHTGREEN;
+            case "failure" -> io.github.dsibilio.badgemaker.model.NamedColor.RED;
+            case "cancelled" -> io.github.dsibilio.badgemaker.model.NamedColor.LIGHTGREY;
+            default -> io.github.dsibilio.badgemaker.model.NamedColor.YELLOW;
+          };
+        }
+      }
+      case "success" -> io.github.dsibilio.badgemaker.model.NamedColor.BRIGHTGREEN;
       case "failure", "action_required", "timed_out" -> io.github.dsibilio.badgemaker.model.NamedColor.RED;
       case "in_progress", "queued", "requested", "waiting" -> io.github.dsibilio.badgemaker.model.NamedColor.YELLOW;
       case "cancelled", "skipped", "stale", "neutral" -> io.github.dsibilio.badgemaker.model.NamedColor.LIGHTGREY;
