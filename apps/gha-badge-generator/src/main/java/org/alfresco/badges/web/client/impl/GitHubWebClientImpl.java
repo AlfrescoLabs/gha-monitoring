@@ -27,8 +27,8 @@ public class GitHubWebClientImpl implements GitHubWebClient {
   }
 
   @Override
-  public Mono<WorkflowRuns> getWorkflowRuns(String owner, String repository, String workflowId) {
-    final String workflowCompositeKey = String.join("+", owner, repository, workflowId);
+  public Mono<WorkflowRuns> getWorkflowRuns(String owner, String repository, String workflowId, String branch) {
+    final String workflowCompositeKey = String.join("+", owner, repository, workflowId, branch);
     WorkflowRuns cachedValue = cache.getIfPresent(workflowCompositeKey);
     if (cachedValue != null) {
       return Mono.just(cachedValue);
@@ -36,13 +36,12 @@ public class GitHubWebClientImpl implements GitHubWebClient {
 
     LOG.info("Requesting workflow runs for owner+repository+workflow={}", workflowCompositeKey);
     return webClient.get()
-        .uri(URI, owner, repository, workflowId)
+        .uri(uriBuilder -> uriBuilder.path(URI).queryParam("branch", branch).build(owner, repository, workflowId))
         .accept(MediaType.APPLICATION_JSON)
         .retrieve()
         .bodyToMono(WorkflowRuns.class)
         .doOnNext(workflowRuns -> {
           cache.put(workflowCompositeKey, workflowRuns);
-          LOG.info(workflowRuns.toString());
         });
   }
 

@@ -33,8 +33,8 @@ public class BadgeServiceImpl implements BadgeService {
   }
 
   @Override
-  public Mono<String> getWorkflowBadge(String owner, String repository, String workflowId) {
-    return gitHubWebClient.getWorkflowRuns(owner, repository, workflowId)
+  public Mono<String> getWorkflowBadge(String owner, String repository, String workflowId, String branch) {
+    return gitHubWebClient.getWorkflowRuns(owner, repository, workflowId, branch)
         .map(BadgeServiceImpl::buildWorkflowBadge);
   }
 
@@ -42,9 +42,9 @@ public class BadgeServiceImpl implements BadgeService {
     String label = "Unknown";
     String message = "unknown";
     String status = "unknown";
-    WorkflowRun lastWorkflowRun = workflowRuns.getWorkflowRuns()
+    WorkflowRun lastWorkflowRun = workflowRuns.getWorkflow_runs()
         .stream()
-        .reduce((a, b) -> a.getRunStartedAt().compareTo(b.getRunStartedAt()) > 0 ? a : b)
+        .reduce((a, b) -> a.getRun_started_at().compareTo(b.getRun_started_at()) > 0 ? a : b)
         .orElse(null);
 
     if (lastWorkflowRun != null) {

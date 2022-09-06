@@ -113,7 +113,7 @@
          <plugin>
             <groupId>org.jsonschema2pojo</groupId>
             <artifactId>jsonschema2pojo-maven-plugin</artifactId>
-            <version>1.0.2</version>
+            <version>1.1.2</version>
             <executions>
                <execution>
                   <id>generate-json-models</id>
@@ -135,6 +135,7 @@
                <dateTimeType>java.time.ZonedDateTime</dateTimeType>
                <useTitleAsClassname>true</useTitleAsClassname>
                <annotationStyle>none</annotationStyle>
+               <propertyWordDelimiters>- </propertyWordDelimiters>
                <sourceDirectory>${basedir}/src/main/resources/models/</sourceDirectory>
             </configuration>
          </plugin>

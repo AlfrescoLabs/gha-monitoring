@@ -14,7 +14,7 @@ class WebClientsConfigTests {
   private WebClient webClient;
 
   @Test
-  void sonarWebClientShouldExist() {
+  void githubWebClientShouldExist() {
     assertNotNull(webClient);
   }
 

@@ -73,6 +73,11 @@ paths:
           schema:
             type: string
             minLength: 1
+        - in: query
+          name: branch
+          schema:
+            type: string
+            default: 'master'
       responses:
         200:
           description: "The request has been accepted"
