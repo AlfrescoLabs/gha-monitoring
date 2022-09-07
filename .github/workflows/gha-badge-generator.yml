@@ -4,11 +4,13 @@ on:
   push:
     paths:
       - "apps/gha-badge-generator/**"
+      - ".github/workflows/gha-badge-generator.yml"
     branches:
       - main
   pull_request:
     paths:
       - "apps/gha-badge-generator/**"
+      - ".github/workflows/gha-badge-generator.yml"
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
