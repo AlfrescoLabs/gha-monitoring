@@ -9,11 +9,13 @@ import { HttpClientModule } from "@angular/common/http";
 
 import { AppComponent } from './app.component';
 import { ActiveRepositoriesSmartComponent } from './active-repositories/active-repositories.smart-component';
+import { SortPipe } from './sort-pipe/sort-pipe.sort-pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ActiveRepositoriesSmartComponent
+    ActiveRepositoriesSmartComponent,
+    SortPipe
   ],
   imports: [
     BrowserModule,

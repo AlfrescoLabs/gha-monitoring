@@ -4,6 +4,7 @@ export interface Repo {
   status_icon: string,
   conclusion: string,
   statusColor: string,
+  updatedAt: string,
   repo: {
     name: string,
     url: string,

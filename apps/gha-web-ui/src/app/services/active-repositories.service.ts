@@ -40,6 +40,7 @@ export class ActiveRepositoriesService {
       conclusion: obj.conclusion ?? '',
       status_icon: this.getStatusIcon(statusKey),
       statusColor: this.getStatusColor(statusKey),
+      updatedAt: obj.updated_at,
       repo: {
         name: obj.repository.name ?? '',
         url: obj.repository.html_url ?? '#',

@@ -1,7 +1,7 @@
 <div fxLayout fxLayoutAlign="center" >
   <div class="active-repositories" fxLayout="column" fxLayoutAlign="center center" *ngIf="repos$">
     <div class="repo" fxLayout fxLayoutAlign="space-between center" fxLayoutGap="30px"
-         *ngFor="let repo of repos$ | async">
+         *ngFor="let repo of repos$ | async | sortByUpdatedAt">
       <div class="repo__header">
         <h3 class="label"><a href="{{ repo.owner.url }}">{{ repo.owner.name }}</a></h3>
         <p><a href="{{ repo.repo.url }}">{{ repo.repo.name }}</a></p>
