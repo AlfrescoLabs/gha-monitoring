@@ -53,7 +53,8 @@ public class BadgeServiceImpl implements BadgeService {
       message = lastWorkflowRun.getConclusion() != null ? lastWorkflowRun.getConclusion() : lastWorkflowRun.getStatus();
     }
 
-    BadgeFormat badgeFormat = new BadgeFormatBuilder(message)
+    String humanReadableMessage = message.replace("_", "");
+    BadgeFormat badgeFormat = new BadgeFormatBuilder(humanReadableMessage)
         .withLabel(label != null ? label : name)
         .withLabelColor(io.github.dsibilio.badgemaker.model.NamedColor.GREY)
         .withMessageColor(getBadgeColor(status, lastWorkflowRun))
