@@ -4,7 +4,7 @@ All scripts that contribute to improving the GitHub Actions monitoring & observa
 
 ## Script to verify there are no running workflows
 
-`gha-monitoring.sh` This script verifies that there are no ongoing workflows for a specific branch across several ACS projects that are linked together for release purposes.
+`gha-monitoring.sh` - This script verifies that there are no ongoing workflows for a specific branch across several ACS projects that are linked together for release purposes.
 * [alfresco-community-repo](https://github.com/Alfresco/alfresco-community-repo)
 * [alfresco-enterprise-repo](https://github.com/Alfresco/alfresco-enterprise-repo)
 * [acs-packaging](https://github.com/Alfresco/acs-packaging)
@@ -17,7 +17,7 @@ There are 2 modes to authenticate:
 
 #### Creating a token
 [Creating a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) - this page provides information about creating the Personal Access Token. 
-</br> You must select **repo** to access repositories from the command line, then you need to authorize the generated token for **Alfresco** access.
+</br> You must select **repo** scope to access repositories, then you need to authorize the generated token for the **Alfresco** access.
 
 ![](images/configure_sso.png)
 
@@ -26,7 +26,7 @@ To run the script you should pass a value for `-m` flag to specify a mode to aut
 * `bash gha-monitoring.sh -m cli` - to use **GitHub CLI**
 
 Additionally, you can specify a branch and overwrite a default branch by passing a value for `-b` flag:
-e.g <br/> `bash gha-monitoring.sh -m pat -b master` <br/> This script exits with code 0 if there are no running workflows, otherwise exits with code 1.
+e.g <br/> `bash gha-monitoring.sh -m pat -b master` <br/> This script exits with code **0** if there are no running workflows, otherwise exits with code **1**.
 
 As a result you can get e.g.:
 ```
