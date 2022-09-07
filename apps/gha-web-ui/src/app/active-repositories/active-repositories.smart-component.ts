@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActiveRepositoriesService } from '../services/active-repositories.service';
 import { Observable } from 'rxjs';
 import { Repo } from '../model/repo.model';
-import { SortPipe } from '../sort-pipe/sort-pipe.sort-pipe';
 
 @Component({
   selector: 'active-repositories',
