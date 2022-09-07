@@ -44,7 +44,7 @@ export class ActiveRepositoriesService {
       } else if (obj.conclusion == 'action_required') {
         return 'account_circle';
       } else if (obj.conclusion == 'neutral') {
-        return 'senitment_neutral';
+        return 'sentiment_neutral';
       } else if (obj.conclusion == 'skipped') {
         return 'not_interested';
       } else if (obj.conclusion == 'stale') {
