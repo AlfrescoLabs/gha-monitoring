@@ -2,6 +2,9 @@ name: Badge generator
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
     paths:
       - "apps/gha-badge-generator/**"
 
