@@ -34,8 +34,10 @@ jobs:
       - run: npm ci
 
       - run: ng build
+        if: github.ref_name != 'main'
 
       - run: ng deploy
+        if: github.ref_name == 'main'
         env:
           NG_DEPLOY_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           NG_DEPLOY_AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
