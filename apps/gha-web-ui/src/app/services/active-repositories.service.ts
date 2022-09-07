@@ -36,7 +36,7 @@ export class ActiveRepositoriesService {
 
     return {
       id: obj.id,
-      status: obj.status ?? '',
+      status: obj.updated_at + obj.status ?? '',
       conclusion: obj.conclusion ?? '',
       status_icon: this.getStatusIcon(statusKey),
       statusColor: this.getStatusColor(statusKey),
