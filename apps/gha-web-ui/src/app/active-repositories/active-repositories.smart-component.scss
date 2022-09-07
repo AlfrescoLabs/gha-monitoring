@@ -9,7 +9,7 @@
   padding: 0 21px;
   width: 100%;
 
-  p{
+  p {
     font-size: 16px;
     color: #666;
   }
@@ -22,11 +22,11 @@
     font-weight: 600;
   }
 
-  &__header{
+  &__header {}
 
-  }
+  &__commit {}
 
-  &__commit{
-
-  }
+  a, a:visited{
+    color: blue;
+}
 }
