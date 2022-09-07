@@ -1,7 +1,6 @@
 name: test-debug-with-tmate
 
 on:
-  push:
   workflow_dispatch:
     inputs:
       debug_enabled:
