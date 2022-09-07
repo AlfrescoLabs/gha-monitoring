@@ -102,8 +102,14 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "@jefiozie/ngx-aws-deploy:deploy"
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }
