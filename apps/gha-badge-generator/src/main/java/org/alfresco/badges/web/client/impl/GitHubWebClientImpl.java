@@ -2,6 +2,7 @@ package org.alfresco.badges.web.client.impl;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import org.alfresco.badges.config.GitHubProperties;
 import org.alfresco.badges.models.WorkflowRuns;
 import org.alfresco.badges.web.client.api.GitHubWebClient;
 import org.slf4j.Logger;
@@ -21,9 +22,9 @@ public class GitHubWebClientImpl implements GitHubWebClient {
   private final WebClient webClient;
   private final Cache<String, WorkflowRuns> cache;
 
-  public GitHubWebClientImpl(WebClient webClient) {
+  public GitHubWebClientImpl(WebClient webClient, GitHubProperties gitHubProperties) {
     this.webClient = webClient;
-    cache = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(5)).build();
+    cache = Caffeine.newBuilder().expireAfterWrite(gitHubProperties.getCacheDuration()).build();
   }
 
   @Override

@@ -12,6 +12,14 @@ github:
   token: <my-github-PAT>
 ```
 
+You can optionally override the default cache duration _(default time unit if unspecified: `seconds`)_:
+
+```yaml
+github:
+  token: <my-github-PAT>
+  cacheDuration: 60S
+```
+
 ## Usage
 
 Run the `gha-badge-generator` with `mvnw spring-boot:run`.

@@ -15,6 +15,7 @@ class GitHubPropertiesTests {
   @Test
   void propertiesShouldBeSet() {
     assertNotNull(gitHubProperties.getToken());
+    assertNotNull(gitHubProperties.getCacheDuration());
   }
 
 }
