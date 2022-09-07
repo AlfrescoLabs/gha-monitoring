@@ -16,6 +16,10 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: apps/gha-web-ui
 
     steps:
       - uses: actions/checkout@v3
@@ -26,11 +30,11 @@ jobs:
 
       - run: yarn global add @angular/cli
 
+      - run: npm ci
+
       - run: ng build
-        working-directory: apps/gha-web-ui
 
       - run: ng deploy
-        working-directory: apps/gha-web-ui
         env:
           NG_DEPLOY_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           NG_DEPLOY_AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
