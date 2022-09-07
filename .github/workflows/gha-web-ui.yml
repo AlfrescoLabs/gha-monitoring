@@ -2,6 +2,8 @@ name: Web UI
 
 on:
   push:
+    paths:
+      - "apps/gha-web-ui/**"
     branches:
       - main
   pull_request:
