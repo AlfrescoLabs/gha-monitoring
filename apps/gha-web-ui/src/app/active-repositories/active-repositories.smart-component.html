@@ -1,0 +1,26 @@
+<ng-container *ngIf="repo$ | async as repo">
+    <div class="active-repositories" fxLayout="column" fxLayoutAlign="center center">
+    <div class="repo" fxLayout fxLayoutAlign="space-between center" fxLayoutGap="30px">
+      <div class="repo__header">
+        <h3 class="label"><a href="{{ repo.owner.url }}">{{ repo.owner.name }}</a></h3>
+        <p><a href="{{ repo.repo.url }}">{{ repo.repo.name }}</a></p>
+      </div>
+      <div class="repo__default">
+        <h3 class="label">Default Branch</h3>
+        <p><a href="#">master passed</a></p>
+      </div>
+      <div class="repo__last">
+        <h3 class="label">Last build</h3>
+        <p><a href="{{ repo.run.url }}">#{{ repo.run.number + " " + repo.status }}</a></p>
+      </div>
+      <div class="repo__commit">
+        <h3 class="label">Commit</h3>
+        <p><a href="{{ repo.commit.url }}">{{ repo.commit.id | slice: 0: 7 }}</a></p>
+      </div>
+      <div class="repo__finished">
+        <h3 class="label">Finished</h3>
+        <p>still running</p>
+      </div>
+    </div>
+  </div>
+</ng-container>

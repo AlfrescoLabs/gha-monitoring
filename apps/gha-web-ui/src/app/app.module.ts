@@ -1,16 +1,28 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppRoutingModule } from './app-routing.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from './material.module';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { HttpClientModule } from "@angular/common/http";
+
 import { AppComponent } from './app.component';
+import { ActiveRepositoriesSmartComponent } from './active-repositories/active-repositories.smart-component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ActiveRepositoriesSmartComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MaterialModule,
+    FlexLayoutModule,
+    MatToolbarModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
