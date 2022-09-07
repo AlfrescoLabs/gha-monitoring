@@ -25,6 +25,7 @@ There are 2 modes to authenticate:
 You need to have installed:
 * [jq](https://stedolan.github.io/jq/) - a command-line JSON processor.
 * [curl](https://curl.se) - a command-line tool for transferring data using various network protocols
+* [gh](https://cli.github.com) - GitHub CLI
 
 To run the script you should pass a value for `-m` flag to specify a mode to authenticate:
 * `bash gha-monitoring.sh -m pat` - to use **Personal Access Token** - In this case, you must have the Person Access Token generated and added it as environment variable - `GITHUB_PAT`
