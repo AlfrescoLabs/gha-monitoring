@@ -39,15 +39,15 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build and push
+      - name: Build (and push when on main)
         uses: docker/build-push-action@v3
         with:
           context: apps/gha-badge-generator
-          push: ${{ github.ref_name != 'main' }}
+          push: ${{ github.ref_name == 'main' }}
           tags: 372466110691.dkr.ecr.eu-west-1.amazonaws.com/hackaton-badge-generator:${{ github.sha }}
 
       - name: Deploy to App Runner
-        if: ${{ github.ref_name != 'main' }}
+        if: ${{ github.ref_name == 'main' }}
         uses: awslabs/amazon-app-runner-deploy@main
         with:
           service: badge-generator
