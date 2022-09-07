@@ -41,5 +41,17 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: apps/gha-badge-generator
-          push: ${{ github.ref_name == 'main' }}
+          push: ${{ github.ref_name != 'main' }}
           tags: 372466110691.dkr.ecr.eu-west-1.amazonaws.com/hackaton-badge-generator:${{ github.sha }}
+
+      - name: Deploy to App Runner
+        if: ${{ github.ref_name != 'main' }}
+        uses: awslabs/amazon-app-runner-deploy@main
+        with:
+          service: badge-generator
+          image: 372466110691.dkr.ecr.eu-west-1.amazonaws.com/hackaton-badge-generator:${{ github.sha }}
+          access-role-arn: arn:aws:iam::372466110691:role/service-role/HackatonVBadgeAppRunnerECRAccessRole
+          region: ${{ env.AWS_REGION }}
+          cpu : 1
+          memory : 2
+          wait-for-service-stability: true
