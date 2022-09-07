@@ -32,10 +32,43 @@ export class ActiveRepositoriesService {
     return res["workflow_runs"]
   }
 
+  private getStatusIcon(status: string, obj: any): string {
+    if (status == 'completed') {
+      // Can be one of: action_required, cancelled, failure, neutral, success, skipped, stale, timed_out
+      if (obj.conclusion == 'success') {
+        return 'check_circle';
+      } else if (obj.conclusion == 'cancelled') {
+        return 'cancel';
+      } else if (obj.conclusion == 'failure') {
+        return 'error';
+      } else if (obj.conclusion == 'action_required') {
+        return 'account_circle';
+      } else if (obj.conclusion == 'neutral') {
+        return 'sentiment_neutral';
+      } else if (obj.conclusion == 'skipped') {
+        return 'not_interested';
+      } else if (obj.conclusion == 'stale') {
+        return 'history_toggle_off';
+      } else if (obj.conclusion == 'timed_out') {
+        return 'access_time';
+      }
+    } else if (status == 'in_progress') {
+      return 'change_circle';
+    } else if (status == 'queued') {
+      return 'pending';
+    }
+    // This shouldn't happen.
+    return 'circle';
+  }
+
   private parseRepo(obj: any): Repo{
+    var status = obj.status ?? '';
+    var status_icon = this.getStatusIcon(status, obj);
+
     return {
       id: obj.id,
-      status: obj.status ?? '',
+      status: status,
+      status_icon: status_icon,
       repo: {
         name: obj.repository.name ?? '',
         url: obj.repository.html_url ?? '#',

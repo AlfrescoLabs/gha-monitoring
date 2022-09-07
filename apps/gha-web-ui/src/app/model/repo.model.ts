@@ -1,6 +1,7 @@
 export interface Repo {
   id: number,
   status: string,
+  status_icon: string,
   repo: {
     name: string,
     url: string,
