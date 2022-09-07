@@ -23,11 +23,7 @@ export class ActiveRepositoriesSmartComponent implements OnInit {
   constructor(private activeRepositoriesService: ActiveRepositoriesService) {}
 
   ngOnInit(): void {
-    // this.repo$ = this.activeRepositoriesService.repo$
     this.repos$ = this.activeRepositoriesService.repos$
-    console.log(this.repos$)
-    // this.activeRepositoriesService.getRepo()
     this.activeRepositoriesService.loadRepos(this.repoList, this.owner)
-
   }
 }
