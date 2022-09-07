@@ -5,6 +5,7 @@ import org.alfresco.badges.web.server.api.BadgesApiDelegate;
 import org.alfresco.badges.web.server.model.NamedColor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,9 @@ public class BadgesDelegateImpl implements BadgesApiDelegate {
   }
 
   private ResponseEntity<Resource> getResponse(String badge) {
-    return ResponseEntity.ok().body(new ByteArrayResource(badge.getBytes()));
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.noCache())
+        .body(new ByteArrayResource(badge.getBytes()));
   }
 
   private static Mono<ResponseEntity<Resource>> withErrorHandling(Mono<ResponseEntity<Resource>> mono) {
