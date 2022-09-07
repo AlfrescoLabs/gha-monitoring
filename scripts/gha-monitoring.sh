@@ -10,7 +10,7 @@ do
     case $OPTION in
         m)
             if [ "$OPTARG" = "pat" ]; then
-              echo "You chose Github Personal Access Token for an authentication"
+              echo "You chose Github Personal Access Token as the authentication mode."
               if [ -n "$GITHUB_PAT" ]; then
                 PROVIDER="curl"
               else
@@ -19,7 +19,7 @@ do
               fi
             fi
             if [ "$OPTARG" = "cli" ]; then
-              echo "You chose Github CLI for an authentication"
+              echo "You chose Github CLI as the authentication mode."
               gh auth login
               PROVIDER='gh api'
             fi
