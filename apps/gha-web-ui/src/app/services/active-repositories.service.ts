@@ -113,7 +113,7 @@ export class ActiveRepositoriesService {
           case "cancelled":
             return 'gray';
           default:
-            return 'yellow';
+            return 'goldenrod';
           }
       case "success":
         return 'green';
@@ -125,7 +125,7 @@ export class ActiveRepositoriesService {
       case "queued":
       case "requested":
       case "waiting":
-        return 'yellow';
+        return 'goldenrod';
       case "cancelled":
       case "skipped":
       case "stale":
