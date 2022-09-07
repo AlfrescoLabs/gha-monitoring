@@ -31,46 +31,15 @@ export class ActiveRepositoriesService {
     return res["workflow_runs"]
   }
 
-  private getStatusIcon(status: string, obj: any): string {
-    if (status == 'completed') {
-      // Can be one of: action_required, cancelled, failure, neutral, success, skipped, stale, timed_out
-      if (obj.conclusion == 'success') {
-        return 'check_circle';
-      } else if (obj.conclusion == 'cancelled') {
-        return 'cancel';
-      } else if (obj.conclusion == 'failure') {
-        return 'error';
-      } else if (obj.conclusion == 'action_required') {
-        return 'account_circle';
-      } else if (obj.conclusion == 'neutral') {
-        return 'sentiment_neutral';
-      } else if (obj.conclusion == 'skipped') {
-        return 'not_interested';
-      } else if (obj.conclusion == 'stale') {
-        return 'history_toggle_off';
-      } else if (obj.conclusion == 'timed_out') {
-        return 'access_time';
-      }
-    } else if (status == 'in_progress') {
-      return 'change_circle';
-    } else if (status == 'queued') {
-      return 'pending';
-    }
-    // This shouldn't happen.
-    return 'circle';
-  }
-
   private parseRepo(obj: any): Repo{
-    var status = obj.status ?? '';
-    var status_icon = this.getStatusIcon(status, obj);
-    var status_color = this.getStatusColor(obj.status, obj.conclusion);
+    var statusKey = obj.conclusion ?? obj.status ?? '';
 
     return {
       id: obj.id,
-      status: status,
-      status_icon: status_icon,
+      status: obj.status ?? '',
       conclusion: obj.conclusion ?? '',
-      statusColor: status_color,
+      status_icon: this.getStatusIcon(statusKey),
+      statusColor: this.getStatusColor(statusKey),
       repo: {
         name: obj.repository.name ?? '',
         url: obj.repository.html_url ?? '#',
@@ -102,19 +71,8 @@ export class ActiveRepositoriesService {
     }
   }
 
-  private getStatusColor(status: string, conclusion: string): string{
-    switch (status) {
-      case "completed":
-        switch (conclusion) {
-          case "success":
-            return 'green';
-          case "failure":
-              return 'red';
-          case "cancelled":
-            return 'gray';
-          default:
-            return 'goldenrod';
-          }
+  private getStatusColor(key: string): string{
+    switch (key) {
       case "success":
         return 'green';
       case "failure":
@@ -125,6 +83,7 @@ export class ActiveRepositoriesService {
       case "queued":
       case "requested":
       case "waiting":
+      case "completed":
         return 'goldenrod';
       case "cancelled":
       case "skipped":
@@ -133,6 +92,36 @@ export class ActiveRepositoriesService {
         return 'gray';
       default:
         return 'orange';
+    }
+  }
+
+  private getStatusIcon(key: string): string{
+    switch (key) {
+      case "success":
+        return 'check_circle';
+      case "failure":
+        return 'error';
+      case "action_required":
+        return 'account_circle';
+      case "timed_out":
+        return 'access_time';
+      case "in_progress":
+        return 'change_circle';
+      case "queued":
+      case "requested":
+      case "waiting":
+        return 'pending';
+      case "cancelled":
+        return 'cancel';
+      case "skipped":
+        return 'not_interested';
+      case "stale":
+        return 'history_toggle_off';
+      case "neutral":
+        return 'sentiment_neutral';
+      case "completed":
+      default:
+        return 'circle';
     }
   }
 }
