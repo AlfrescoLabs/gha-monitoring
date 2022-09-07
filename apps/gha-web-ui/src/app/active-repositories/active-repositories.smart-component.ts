@@ -10,11 +10,24 @@ import { Repo } from '../model/repo.model';
 })
 export class ActiveRepositoriesSmartComponent implements OnInit {
   repo$: Observable<Repo>;
+  repos$: Observable<Repo[]>;
+  private owner = 'Alfresco';
+  private repoList: string[] = [
+    'alfresco-community-repo',
+    'alfresco-enterprise-repo',
+    'alfresco-enterprise-share',
+    'acs-packaging',
+    'acs-community-packaging'
+  ];
 
   constructor(private activeRepositoriesService: ActiveRepositoriesService) {}
 
   ngOnInit(): void {
-    this.repo$ = this.activeRepositoriesService.repo$
-    this.activeRepositoriesService.getRepo()
+    // this.repo$ = this.activeRepositoriesService.repo$
+    this.repos$ = this.activeRepositoriesService.repos$
+    console.log(this.repos$)
+    // this.activeRepositoriesService.getRepo()
+    this.activeRepositoriesService.loadRepos(this.repoList, this.owner)
+
   }
 }
