@@ -8,24 +8,23 @@ import { Repo } from '../model/repo.model';
 })
 export class ActiveRepositoriesService {
   private baseUrl = 'https://api.github.com';
-  private repoSource = new BehaviorSubject<any>(null)
-  repo$:Observable<Repo> = this.repoSource.asObservable()
-
-  //for testing
-  private owner = 'Alfresco';
-  private repo = 'alfresco-community-repo';
+  private reposSource = new BehaviorSubject<any>([]);
+  repos$:Observable<Repo[]> = this.reposSource.asObservable();
+  private token = '';
+  private authorizationParam = '';
 
   constructor(private http: HttpClient) {}
 
-  getRepo(owner: string = this.owner, repo:string = this.repo, baseUrl = this.baseUrl){
-    this.http.get(`${baseUrl}/repos/${owner}/${repo}/actions/runs`)
+  getRepo(repo:string, owner: string, baseUrl = this.baseUrl) {
+
+    this.http.get(`${baseUrl}/repos/${owner}/${repo}/actions/runs`,
+      {headers: {'Authorization': this.authorizationParam}})
       .pipe(
         map(res => this.formatRes(res))
       )
       .subscribe(res => {
-        this.repoSource.next(this.parseRepo(res[0]));
+          this.reposSource.next([...this.reposSource.getValue(), this.parseRepo((res[0]))]);
       })
-
   }
 
   private formatRes(res: any){
@@ -64,14 +63,21 @@ export class ActiveRepositoriesService {
   private parseRepo(obj: any): Repo{
     var status = obj.status ?? '';
     var status_icon = this.getStatusIcon(status, obj);
+    var status_color = this.getStatusColor(obj.status, obj.conclusion);
 
     return {
       id: obj.id,
       status: status,
       status_icon: status_icon,
+      conclusion: obj.conclusion ?? '',
+      statusColor: status_color,
       repo: {
         name: obj.repository.name ?? '',
         url: obj.repository.html_url ?? '#',
+      },
+      headBranch: {
+        name: obj.head_branch,
+        url: `https://github.com/${obj.repository.owner.login}/${obj.repository.name}/tree/${obj.head_branch}` ?? '#',
       },
       commit: {
         id: obj.head_sha ?? '',
@@ -85,6 +91,48 @@ export class ActiveRepositoriesService {
         name: obj.repository.owner.login ?? '',
         url: obj.repository.owner.html_url ?? '#',
       }
+    }
+  }
+
+  loadRepos(repos: string[], owner: string){
+    this.token ? this.authorizationParam = `Bearer ${this.token}` : this.authorizationParam = '';
+
+    for (let repo of repos){
+      this.getRepo(repo, owner);
+    }
+  }
+
+  private getStatusColor(status: string, conclusion: string): string{
+    switch (status) {
+      case "completed":
+        switch (conclusion) {
+          case "success":
+            return 'green';
+          case "failure":
+              return 'red';
+          case "cancelled":
+            return 'gray';
+          default:
+            return 'yellow';
+          }
+      case "success":
+        return 'green';
+      case "failure":
+      case "action_required":
+      case "timed_out":
+        return 'red';
+      case "in_progress":
+      case "queued":
+      case "requested":
+      case "waiting":
+        return 'yellow';
+      case "cancelled":
+      case "skipped":
+      case "stale":
+      case "neutral":
+        return 'gray';
+      default:
+        return 'orange';
     }
   }
 }
