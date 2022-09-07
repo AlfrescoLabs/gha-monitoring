@@ -27,6 +27,7 @@ jobs:
         with:
           java-version: "17"
           distribution: "adopt"
+          cache: "maven"
 
       - name: Build with Maven
         working-directory: apps/gha-badge-generator
