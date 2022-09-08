@@ -39,7 +39,7 @@ jobs:
       - run: npm ci
 
       - name: ng build
-        run: npm run ng build
+        run: npm run ng build -- --base-href=/gha-monitoring/
 
       - name: Upload dist folder as artifact
         uses: actions/upload-pages-artifact@v1
