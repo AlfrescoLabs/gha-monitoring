@@ -15,7 +15,10 @@
     </form>
   </ng-template>
 </mat-toolbar>
-
+<ng-container *ngIf="isLoading$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</ng-container>
 <div class="content" fxLayout="column">
   <active-repositories [repoList]="repoList" [owner]="owner"></active-repositories>
 </div>
+

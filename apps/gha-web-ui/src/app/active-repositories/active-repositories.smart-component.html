@@ -8,7 +8,7 @@
 <div fxLayout fxLayoutAlign="center" >
   <div class="active-repositories" fxLayout="column" fxLayoutAlign="center center" *ngIf="repos$">
     <div class="repo" fxLayout fxLayoutAlign="space-between center" fxLayoutGap="30px"
-         *ngFor="let repo of repos$ | async | repoFilter: filter | sortByUpdatedAt">
+         *ngFor="let repo of repos$ | async | repoFilter: filter | sortByUpdatedAt | slice : startIndex : endIndex">
       <div class="repo__header">
         <h3 class="label"><a href="{{ repo.owner.url }}">{{ repo.owner.name }}</a></h3>
         <p><a href="{{ repo.repo.url }}">{{ repo.repo.name }}</a></p>
@@ -34,5 +34,13 @@
         <ng-template #elseBlock><p>{{ repo.updatedAt | date: 'dd/MM/yy hh:mm' }}</p></ng-template>
       </div>
     </div>
+    <mat-paginator [length]="(repos$ | async)?.length"
+                   [pageSize]="10"
+                   (page)="onPageChange($event)"
+                   [pageSizeOptions]="[5, 10, 25, 100]"
+                   aria-label="Select page">
+    </mat-paginator>
   </div>
 </div>
+
+
