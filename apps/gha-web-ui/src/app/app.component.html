@@ -1,8 +1,8 @@
 <mat-toolbar color="primary" fxLayout fxLayoutAlign="space-between center">
-  <ng-container>
-    <img height="50%" style="padding-right: 10px;" src="assets/static/alfresco-logo.png" />
+  <div fxLayout fxLayoutAlign="space-between center">
+    <img [ngStyle]="{height: '45px', marginRight: '15px'}" src="assets/static/alfresco-logo.png" />
     <span>Alfresco GitHub Dashboard</span>
-  </ng-container>
+  </div>
   <ng-container *ngIf="isLoggedIn$ | async; else setTokenInput">
     <button mat-flat-button color="primary" (click)="deleteToken()">Sign out <mat-icon>exit_to_app</mat-icon></button>
   </ng-container>
