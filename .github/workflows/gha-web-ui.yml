@@ -7,12 +7,13 @@ on:
       - ".github/workflows/gha-web-ui.yml"
     branches:
       - main
+
   pull_request:
     paths:
       - "apps/gha-web-ui/**"
       - ".github/workflows/gha-web-ui.yml"
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+# Allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
@@ -32,7 +33,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: "18.8.0"
-          cache: "npm"
+          cache: npm
           cache-dependency-path: apps/gha-web-ui/package-lock.json
 
       - run: npm ci
@@ -43,19 +44,18 @@ jobs:
       - name: Upload dist folder as artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: "apps/gha-web-ui/dist/gha-web-ui/"
+          path: apps/gha-web-ui/dist/gha-web-ui/
 
   deploy:
     runs-on: ubuntu-latest
-    concurrency:
-      group: "pages"
-      cancel-in-progress: true
-    #if: github.ref_name == 'main'
-    needs:
-      - build
+    if: github.ref_name == 'main'
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: "pages"
+      cancel-in-progress: true
 
     steps:
       - name: Setup Pages
