@@ -17,8 +17,7 @@ do
                 echo "Missing GITHUB_PAT variable"
                 exit 1
               fi
-            fi
-            if [ "$OPTARG" = "cli" ]; then
+            elif [ "$OPTARG" = "cli" ]; then
               echo "You chose Github CLI as the authentication mode."
               gh auth login
               PROVIDER='gh api'
@@ -47,6 +46,11 @@ EOF
         *) echo "Invalid option $REPLY";;
     esac
 done
+
+if [ -z "$PROVIDER" ]; then
+  echo "You must choose a provider with -m pat or -m cli"
+  exit 1
+fi
 
 echo "Branch: $BRANCH"
 
