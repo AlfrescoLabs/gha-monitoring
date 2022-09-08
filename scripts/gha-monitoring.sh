@@ -66,7 +66,7 @@ do
             https://api.github.com/repos/Alfresco/"$REPO"/actions/runs?branch="$BRANCH"'&'status="$STATUS")
         fi
         MESSAGE=$(jq -n "$PLAIN_RESPONSE" | jq '.message')
-        if [ "$MESSAGE" = "\"Bad credentials\"" ]; then
+        if [ "$MESSAGE" != "null" ]; then
           echo "Error: $MESSAGE"
           exit 1
         fi
