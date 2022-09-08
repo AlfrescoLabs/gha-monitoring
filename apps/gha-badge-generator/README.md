@@ -2,7 +2,7 @@
 
 | Old Badge | Honest Badge |
 |-----------|--------------|
-| [![Build Status](https://github.com/Alfresco/alfresco-community-repo/actions/workflows/hackathon.yml/badge.svg?branch=hack/hackathon-demo)](https://github.com/Alfresco/alfresco-community-repo/actions?query=branch%3Ahack%2Fhackathon-demo) | [![Honest Build Status](http://localhost:8080/badges/github/Alfresco/alfresco-community-repo/hackathon.yml?branch=hack/hackathon-demo)](https://github.com/Alfresco/alfresco-community-repo/actions?query=branch%3Ahack%2Fhackathon-demo) |
+| [![Build Status](https://github.com/Alfresco/alfresco-community-repo/actions/workflows/hackathon.yml/badge.svg?branch=hack/hackathon-demo)](https://github.com/Alfresco/alfresco-community-repo/actions?query=branch%3Ahack%2Fhackathon-demo) | [![Honest Build Status](https://mvdaxgtsxz.eu-west-1.awsapprunner.com/badges/github/Alfresco/alfresco-community-repo/hackathon.yml?branch=hack/hackathon-demo)](https://github.com/Alfresco/alfresco-community-repo/actions?query=branch%3Ahack%2Fhackathon-demo) |
 
 `gha-badge-generator` is a **reactive SVG badge generator for GitHub Actions workflows**, able to produce dynamically rendered build badges for both public and private GitHub repositories.
 These badges differ from the standard GitHub Action badges, as they're actually honest when it comes down to the status of the most recent workflow.
