@@ -1,7 +1,14 @@
+<div fxLayout fxLayoutAlign="center">
+    <mat-form-field  class="filter-bar" appearance="fill">
+      <mat-label>Filter</mat-label>
+      <input type="search" matInput [(ngModel)]="filter" placeholder="Search...">
+    </mat-form-field>
+</div>
+
 <div fxLayout fxLayoutAlign="center" >
   <div class="active-repositories" fxLayout="column" fxLayoutAlign="center center" *ngIf="repos$">
     <div class="repo" fxLayout fxLayoutAlign="space-between center" fxLayoutGap="30px"
-         *ngFor="let repo of repos$ | async | sortByUpdatedAt">
+         *ngFor="let repo of repos$ | async | repoFilter: filter | sortByUpdatedAt">
       <div class="repo__header">
         <h3 class="label"><a href="{{ repo.owner.url }}">{{ repo.owner.name }}</a></h3>
         <p><a href="{{ repo.repo.url }}">{{ repo.repo.name }}</a></p>
