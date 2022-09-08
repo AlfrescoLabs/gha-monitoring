@@ -4,16 +4,20 @@ on:
   push:
     paths:
       - "apps/gha-web-ui/**"
+      - ".github/workflows/gha-web-ui.yml"
     branches:
       - main
+
   pull_request:
     paths:
       - "apps/gha-web-ui/**"
+      - ".github/workflows/gha-web-ui.yml"
 
-env:
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  AWS_REGION: eu-west-1
+# Allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build:
@@ -29,20 +33,34 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: "18.8.0"
-          cache: 'npm'
+          cache: npm
           cache-dependency-path: apps/gha-web-ui/package-lock.json
-
-      - run: yarn global add @angular/cli
 
       - run: npm ci
 
-      - run: ng build
-        if: github.ref_name != 'main'
+      - name: ng build
+        run: npm run ng build -- --base-href=/gha-monitoring/
 
-      - run: ng deploy
-        if: github.ref_name == 'main'
-        env:
-          NG_DEPLOY_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          NG_DEPLOY_AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          NG_DEPLOY_AWS_REGION: eu-west-1
-          NG_DEPLOY_AWS_BUCKET: hackaton-v-ui
+      - name: Upload dist folder as artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: apps/gha-web-ui/dist/gha-web-ui/
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'main'
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: "pages"
+      cancel-in-progress: true
+
+    steps:
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
