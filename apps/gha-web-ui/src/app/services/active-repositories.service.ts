@@ -22,8 +22,10 @@ export class ActiveRepositoriesService {
       .pipe(
         map(res => this.formatRes(res))
       )
-      .subscribe(res => {
-          this.reposSource.next([...this.reposSource.getValue(), this.parseRepo((res[0]))]);
+      .subscribe(workflows => {
+        for (let workflow of workflows) {
+          this.reposSource.next([...this.reposSource.getValue(), this.parseRepo((workflow))]);
+        }
       })
   }
 
@@ -90,6 +92,7 @@ export class ActiveRepositoriesService {
       case "skipped":
       case "stale":
       case "neutral":
+      case "startup_failure":
         return 'gray';
       default:
         return 'orange';
@@ -120,6 +123,8 @@ export class ActiveRepositoriesService {
         return 'history_toggle_off';
       case "neutral":
         return 'sentiment_neutral';
+      case "startup_failure":
+        return 'offline_bolt';
       case "completed":
       default:
         return 'circle';
