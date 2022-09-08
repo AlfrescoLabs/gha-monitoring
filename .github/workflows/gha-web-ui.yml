@@ -40,7 +40,7 @@ jobs:
 
       - run: npm ci
 
-      - run: ng build
+      - run: npm run ng build
 
       - name: Setup Pages
         if: github.ref_name == 'main'
