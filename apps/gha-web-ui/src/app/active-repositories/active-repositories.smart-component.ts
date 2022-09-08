@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import { ActiveRepositoriesService } from '../services/active-repositories.service';
 import { Observable } from 'rxjs';
 import { Repo } from '../model/repo.model';
@@ -9,16 +9,10 @@ import { Repo } from '../model/repo.model';
   styleUrls: ['active-repositories.smart-component.scss']
 })
 export class ActiveRepositoriesSmartComponent implements OnInit {
-  repo$: Observable<Repo>;
+
+  @Input() repoList: string[]
+  @Input() owner: string
   repos$: Observable<Repo[]>;
-  private owner = 'Alfresco';
-  private repoList: string[] = [
-    'alfresco-community-repo',
-    'alfresco-enterprise-repo',
-    'alfresco-enterprise-share',
-    'acs-packaging',
-    'acs-community-packaging'
-  ];
 
   constructor(private activeRepositoriesService: ActiveRepositoriesService) {}
 

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { Repo } from '../model/repo.model';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,10 +11,11 @@ export class ActiveRepositoriesService {
   private baseUrl = 'https://api.github.com';
   private reposSource = new BehaviorSubject<any>([]);
   repos$:Observable<Repo[]> = this.reposSource.asObservable();
-  private token = '';
   private authorizationParam = '';
+  private isLoggedInSource = new BehaviorSubject<boolean>(false);
+  isLoggedIn$:Observable<boolean> = this.isLoggedInSource.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cookieService: CookieService) {}
 
   getRepo(repo:string, owner: string, baseUrl = this.baseUrl) {
 
@@ -66,8 +68,27 @@ export class ActiveRepositoriesService {
     }
   }
 
+  logOut(): void {
+    this.isLoggedInSource.next(false);
+    this.cookieService.delete('Token');
+  }
+
+  setToken(token: string): void {
+    this.isLoggedInSource.next(true)
+    this.cookieService.set('Token', token);
+    this.cleanRepos()
+  }
+
+  checkCookies(): void {
+    this.cookieService.get('Token') ? this.isLoggedInSource.next(true) : this.isLoggedInSource.next(false)
+  }
+
+  cleanRepos() {
+    this.reposSource.next([])
+  }
+
   loadRepos(repos: string[], owner: string){
-    this.token ? this.authorizationParam = `Bearer ${this.token}` : this.authorizationParam = '';
+    this.cookieService.get('Token') ? this.authorizationParam = `Bearer ${this.cookieService.get('Token')}` : this.authorizationParam = '';
 
     for (let repo of repos){
       this.getRepo(repo, owner);
