@@ -13,6 +13,7 @@ export class ActiveRepositoriesSmartComponent implements OnInit {
   @Input() repoList: string[]
   @Input() owner: string
   repos$: Observable<Repo[]>;
+  filter: '';
 
   constructor(private activeRepositoriesService: ActiveRepositoriesService) {}
 
