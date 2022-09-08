@@ -19,7 +19,7 @@ do
               fi
             elif [ "$OPTARG" = "cli" ]; then
               echo "You chose Github CLI as the authentication mode."
-              gh auth login
+              gh auth status || gh auth login
               PROVIDER='gh api'
             fi
             ;;
