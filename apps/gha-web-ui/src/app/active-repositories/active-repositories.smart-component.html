@@ -23,7 +23,8 @@
       </div>
       <div class="repo__finished">
         <h3 class="label">Finished</h3>
-        <p>still running</p>
+        <p *ngIf="repo.statusColor === 'goldenrod'; else elseBlock">in progress</p>
+        <ng-template #elseBlock>{{ repo.updatedAt | date: 'dd/MM/yy hh:mm' }}</ng-template>
       </div>
     </div>
   </div>
