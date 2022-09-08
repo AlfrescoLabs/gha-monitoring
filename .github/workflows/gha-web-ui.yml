@@ -48,7 +48,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    #if: github.ref_name == 'main'
+    if: github.ref_name == 'main'
     needs: build
     environment:
       name: github-pages
