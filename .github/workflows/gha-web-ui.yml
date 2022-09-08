@@ -38,20 +38,21 @@ jobs:
           cache: 'npm'
           cache-dependency-path: apps/gha-web-ui/package-lock.json
 
-      - run: yarn global add @angular/cli
-
       - run: npm ci
 
       - run: ng build
 
       - name: Setup Pages
+        if: github.ref_name == 'main'
         uses: actions/configure-pages@v2
 
       - name: Upload artifact
+        if: github.ref_name == 'main'
         uses: actions/upload-pages-artifact@v1
         with:
           path: 'apps/gha-web-ui/dist/gha-web-ui/'
 
       - name: Deploy to GitHub Pages
+        if: github.ref_name == 'main'
         id: deployment
         uses: actions/deploy-pages@v1
