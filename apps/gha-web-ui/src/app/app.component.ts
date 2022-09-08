@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 export class AppComponent implements OnInit{
   title = 'gha-web-ui';
   isLoggedIn$: Observable<boolean>;
+  isLoading$: Observable<boolean>;
 
   owner = 'Alfresco';
   repoList: string[] = [
@@ -26,6 +27,7 @@ export class AppComponent implements OnInit{
   ngOnInit(){
     this.activeRepositoriesService.checkCookies();
     this.isLoggedIn$ = this.activeRepositoriesService.isLoggedIn$;
+    this.isLoading$ = this.activeRepositoriesService.isLoading$;
   }
 
   testInput(val: any){

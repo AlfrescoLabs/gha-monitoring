@@ -4,7 +4,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { HttpClientModule } from "@angular/common/http";
 
 import { AppComponent } from './app.component';
@@ -26,7 +25,6 @@ import { CookieService } from "ngx-cookie-service";
     BrowserAnimationsModule,
     MaterialModule,
     FlexLayoutModule,
-    MatToolbarModule,
     HttpClientModule
   ],
   providers: [CookieService],

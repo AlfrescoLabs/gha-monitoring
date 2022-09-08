@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import {BehaviorSubject, finalize, map, Observable} from 'rxjs';
 import { Repo } from '../model/repo.model';
 import { CookieService } from 'ngx-cookie-service';
 
@@ -14,6 +14,8 @@ export class ActiveRepositoriesService {
   private authorizationParam = '';
   private isLoggedInSource = new BehaviorSubject<boolean>(false);
   isLoggedIn$:Observable<boolean> = this.isLoggedInSource.asObservable();
+  private isLoadingSource = new BehaviorSubject<boolean>(false);
+  isLoading$:Observable<boolean> = this.isLoadingSource.asObservable();
 
   constructor(private http: HttpClient, private cookieService: CookieService) {}
 
@@ -22,7 +24,8 @@ export class ActiveRepositoriesService {
     this.http.get(`${baseUrl}/repos/${owner}/${repo}/actions/runs`,
       {headers: {'Authorization': this.authorizationParam}})
       .pipe(
-        map(res => this.formatRes(res))
+        map(res => this.formatRes(res)),
+        finalize( () => this.isLoadingSource.next(false))
       )
       .subscribe(workflows => {
         for (let workflow of workflows) {
@@ -89,10 +92,12 @@ export class ActiveRepositoriesService {
 
   loadRepos(repos: string[], owner: string){
     this.cookieService.get('Token') ? this.authorizationParam = `Bearer ${this.cookieService.get('Token')}` : this.authorizationParam = '';
+    this.isLoadingSource.next(true);
 
     for (let repo of repos){
       this.getRepo(repo, owner);
     }
+
   }
 
   private getStatusColor(key: string): string{
