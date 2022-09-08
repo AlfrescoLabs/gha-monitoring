@@ -21,9 +21,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     defaults:
       run:
         shell: bash
@@ -35,24 +32,31 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: "18.8.0"
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: apps/gha-web-ui/package-lock.json
 
       - run: npm ci
 
       - run: npm run ng build
 
-      - name: Setup Pages
-        if: github.ref_name == 'main'
-        uses: actions/configure-pages@v2
-
       - name: Upload artifact
-        if: github.ref_name == 'main'
         uses: actions/upload-pages-artifact@v1
         with:
-          path: 'apps/gha-web-ui/dist/gha-web-ui/'
+          path: "apps/gha-web-ui/dist/gha-web-ui/"
+
+  deploy:
+    runs-on: ubuntu-latest
+    #if: github.ref_name == 'main'
+    needs:
+      - build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
 
       - name: Deploy to GitHub Pages
-        if: github.ref_name == 'main'
         id: deployment
         uses: actions/deploy-pages@v1
