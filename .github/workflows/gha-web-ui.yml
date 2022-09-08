@@ -4,11 +4,13 @@ on:
   push:
     paths:
       - "apps/gha-web-ui/**"
+      - ".github/workflows/gha-web-ui.yml"
     branches:
       - main
   pull_request:
     paths:
       - "apps/gha-web-ui/**"
+      - ".github/workflows/gha-web-ui.yml"
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -37,12 +39,15 @@ jobs:
       - run: npm ci
 
       - run: ng build
-        if: github.ref_name != 'main'
 
-      - run: ng deploy
-        if: github.ref_name == 'main'
-        env:
-          NG_DEPLOY_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          NG_DEPLOY_AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          NG_DEPLOY_AWS_REGION: eu-west-1
-          NG_DEPLOY_AWS_BUCKET: hackaton-v-ui
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: 'apps/gha-web-ui/dist/gha-web-ui/'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
