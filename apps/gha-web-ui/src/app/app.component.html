@@ -1,5 +1,21 @@
-<mat-toolbar color="primary">
-  <img height="50%" style="padding-right: 10px;" src="assets/static/alfresco-logo.png" />
-  <span>Alfresco GitHub Dashboard</span>
+<mat-toolbar color="primary" fxLayout fxLayoutAlign="space-between center">
+  <div fxLayout fxLayoutAlign="space-between center">
+    <img [ngStyle]="{height: '45px', marginRight: '15px'}" src="assets/static/alfresco-logo.png" />
+    <span>Alfresco GitHub Dashboard</span>
+  </div>
+  <ng-container *ngIf="isLoggedIn$ | async; else setTokenInput">
+    <button mat-flat-button color="primary" (click)="deleteToken()">Sign out <mat-icon>exit_to_app</mat-icon></button>
+  </ng-container>
+  <ng-template #setTokenInput>
+    <form>
+      <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label>GitHub PAT</mat-label>
+        <input #tknInput (keydown.enter)="testInput(tknInput.value)" type="password" matInput>
+      </mat-form-field>
+    </form>
+  </ng-template>
 </mat-toolbar>
-<active-repositories></active-repositories>
+
+<div class="content" fxLayout="column">
+  <active-repositories [repoList]="repoList" [owner]="owner"></active-repositories>
+</div>

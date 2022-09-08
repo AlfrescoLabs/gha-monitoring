@@ -10,6 +10,7 @@ import { HttpClientModule } from "@angular/common/http";
 import { AppComponent } from './app.component';
 import { ActiveRepositoriesSmartComponent } from './active-repositories/active-repositories.smart-component';
 import { SortPipe } from './sort-pipe/sort-pipe.sort-pipe';
+import { CookieService } from "ngx-cookie-service";
 
 @NgModule({
   declarations: [
@@ -26,7 +27,7 @@ import { SortPipe } from './sort-pipe/sort-pipe.sort-pipe';
     MatToolbarModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
