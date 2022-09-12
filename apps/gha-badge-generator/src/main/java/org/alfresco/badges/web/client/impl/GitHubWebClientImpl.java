@@ -10,13 +10,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import org.alfresco.badges.models.PullRequestSimple;
 
 @Component
 public class GitHubWebClientImpl implements GitHubWebClient {
 
   private static final Logger LOG = LoggerFactory.getLogger(GitHubWebClientImpl.class);
   private static final String WORKFLOW_URI = "/{owner}/{repository}/actions/workflows/{workflowId}/runs";
+  private static final String WORKFLOW_LIST_URI = "/{owner}/{repository}/actions/runs";
+  private static final String PULL_URI = "/{owner}/{repo}/pulls";
   private final WebClient webClient;
   private final Cache<String, WorkflowRuns> cache;
 
@@ -45,15 +49,27 @@ public class GitHubWebClientImpl implements GitHubWebClient {
   }
 
   @Override
-  public Mono<WorkflowRuns> getPullRequests(String owner, String repository, String workflowId, String branch) {
+  public Mono<WorkflowRuns> getWorkflowRunsForARepository(String owner, String repository,
+      String branch) {
+    //TODO add cache
+
+    LOG.info("Requesting list workflow runs for a repository for owner+repository+workflow={}", owner+"/"+repository);
     return webClient.get()
-        .uri(uriBuilder -> uriBuilder.path(WORKFLOW_URI).queryParam("branch", branch).build(owner, repository, workflowId))
+        .uri(uriBuilder -> uriBuilder.path(WORKFLOW_LIST_URI).queryParam("branch", branch).build(owner, repository))
         .accept(MediaType.APPLICATION_JSON)
         .retrieve()
-        .bodyToMono(WorkflowRuns.class)
-        .doOnNext(workflowRuns -> {
-          cache.put(workflowCompositeKey, workflowRuns);
-        });
+        .bodyToMono(WorkflowRuns.class);
+  }
+
+  @Override
+  public Flux<PullRequestSimple> getPullRequests(String owner, String repository, String user,
+      String state) {
+    //TODO add cache
+    LOG.info("Requesting pull request for {}", owner+"/"+repository);
+    return webClient.get()
+        .uri(uriBuilder -> uriBuilder.path(PULL_URI).queryParam("head", "user:"+user).build(owner, repository))
+        .retrieve()
+        .bodyToFlux(PullRequestSimple.class);
   }
 
 }

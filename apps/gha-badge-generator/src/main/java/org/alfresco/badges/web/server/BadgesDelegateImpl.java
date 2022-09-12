@@ -42,9 +42,8 @@ public class BadgesDelegateImpl implements BadgesApiDelegate {
   
   @Override
   public Mono<ResponseEntity<Resource>> getPrStatus(String owner, String repository, String pattern, String user, PrField field, ServerWebExchange exchange) {
-    return withErrorHandling(pullRequestService.getPullRequestStatus(owner + repository, workflowId, branch, label)
+    return withErrorHandling(pullRequestService.getPullRequestStatus(owner, repository, pattern, user, field)
                                  .map(this::getResponse));
-    return BadgesApiDelegate.super.getPrStatus(owner, repository, pattern, user, field, exchange);
   }
 
   private ResponseEntity<Resource> getResponse(String badge) {

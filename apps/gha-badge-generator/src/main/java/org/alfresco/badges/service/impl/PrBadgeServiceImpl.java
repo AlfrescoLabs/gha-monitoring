@@ -50,8 +50,8 @@ public class PrBadgeServiceImpl implements PrBadgeService {
 
   private Stream<GithubPullRequest> getPullRequests(RepositoryConfiguration bc) {
     try {
-      return pullRequestService.getPullRequestStatus(bc.getRepository(), bc.getPattern()).stream();
-    } catch (IOException e) {
+      return null;//TODO pullRequestService.getPullRequestStatus(bc.getRepository(), bc.getPattern()).stream();
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }

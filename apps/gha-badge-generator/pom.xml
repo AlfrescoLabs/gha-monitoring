@@ -65,6 +65,12 @@
          <groupId>javax.validation</groupId>
          <artifactId>validation-api</artifactId>
       </dependency>
+      <dependency>
+         <groupId>io.netty</groupId>
+         <artifactId>netty-all</artifactId>
+         <version>4.1.81.Final</version>
+      </dependency>
+
       <!-- Test dependencies -->
       <dependency>
          <groupId>org.springframework.boot</groupId>
