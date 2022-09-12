@@ -12,19 +12,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.time.Duration;
-
 @Component
 public class GitHubWebClientImpl implements GitHubWebClient {
 
   private static final Logger LOG = LoggerFactory.getLogger(GitHubWebClientImpl.class);
-  private static final String URI = "/{owner}/{repository}/actions/workflows/{workflowId}/runs";
+  private static final String WORKFLOW_URI = "/{owner}/{repository}/actions/workflows/{workflowId}/runs";
   private final WebClient webClient;
   private final Cache<String, WorkflowRuns> cache;
 
   public GitHubWebClientImpl(WebClient webClient, GitHubProperties gitHubProperties) {
     this.webClient = webClient;
-    cache = Caffeine.newBuilder().expireAfterWrite(gitHubProperties.getCacheDuration()).build();
+    this.cache = Caffeine.newBuilder().expireAfterWrite(gitHubProperties.getCacheDuration()).build();
   }
 
   @Override
@@ -37,7 +35,19 @@ public class GitHubWebClientImpl implements GitHubWebClient {
 
     LOG.info("Requesting workflow runs for owner+repository+workflow={}", workflowCompositeKey);
     return webClient.get()
-        .uri(uriBuilder -> uriBuilder.path(URI).queryParam("branch", branch).build(owner, repository, workflowId))
+        .uri(uriBuilder -> uriBuilder.path(WORKFLOW_URI).queryParam("branch", branch).build(owner, repository, workflowId))
+        .accept(MediaType.APPLICATION_JSON)
+        .retrieve()
+        .bodyToMono(WorkflowRuns.class)
+        .doOnNext(workflowRuns -> {
+          cache.put(workflowCompositeKey, workflowRuns);
+        });
+  }
+
+  @Override
+  public Mono<WorkflowRuns> getPullRequests(String owner, String repository, String workflowId, String branch) {
+    return webClient.get()
+        .uri(uriBuilder -> uriBuilder.path(WORKFLOW_URI).queryParam("branch", branch).build(owner, repository, workflowId))
         .accept(MediaType.APPLICATION_JSON)
         .retrieve()
         .bodyToMono(WorkflowRuns.class)

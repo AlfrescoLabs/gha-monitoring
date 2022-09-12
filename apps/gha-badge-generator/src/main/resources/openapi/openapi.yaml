@@ -6,14 +6,14 @@ info:
   contact:
     name: "Domenico Sibilio"
     email: "domenicosibilio@gmail.com"
-tags: 
+tags:
   - name: Badges API
 paths:
   /badges/{message}:
     get:
       summary: "Generate a static badge"
       operationId: "getBadge"
-      parameters: 
+      parameters:
         - in: path
           name: message
           required: true
@@ -54,7 +54,7 @@ paths:
     get:
       summary: "Generate a dynamic GitHub Action workflow badge"
       operationId: "getGitHubWorkflowBadge"
-      parameters: 
+      parameters:
         - in: path
           name: owner
           required: true
@@ -96,8 +96,93 @@ paths:
           description: "Internal server error"
       tags:
         - Badges API
+  /badges/prstatus/{owner}/{repository}:
+    get:
+      summary: "Generate a dynamic GitHub Pull request badge"
+      operationId: "getPrStatus"
+      parameters:
+        - in: path
+          name: owner
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - in: path
+          name: repository
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - in: query
+          name: pattern
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - in: query
+          name: user
+          schema:
+            type: string
+        - in: query
+          name: field
+          schema:
+            $ref: "#/components/schemas/PrField"
+      responses:
+        200:
+          description: "The request has been accepted"
+          content:
+            image/svg+xml:
+              schema:
+                type: string
+                format: binary
+        400:
+          description: "Message validation exception"
+        500:
+          description: "Internal server error"
+      tags:
+        - Badges API
+  /badges/prurl/{owner}/{repository}:
+    get:
+      summary: "Redirect to a selected PR"
+      operationId: "getPrRedirectUrl"
+      parameters:
+        - in: path
+          name: owner
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - in: path
+          name: repository
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - in: query
+          name: pattern
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - in: query
+          name: user
+          schema:
+            type: string
+      responses:
+        302:
+          description: "Redirect to Pull request URL"
+        400:
+          description: "Message validation exception"
+        500:
+          description: "Internal server error"
+      tags:
+        - Badges API
+
 components:
   schemas:
     NamedColor:
       type: string
       enum: [ BRIGHTGREEN, GREEN, YELLOW, YELLOWGREEN, ORANGE, RED, BLUE, GREY, LIGHTGREY ]
+    PrField:
+      type: string
+      enum: [ TITLE, DESCRIPTION ]
