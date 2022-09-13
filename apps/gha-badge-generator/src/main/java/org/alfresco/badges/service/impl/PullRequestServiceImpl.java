@@ -4,13 +4,11 @@ import io.github.dsibilio.badgemaker.core.BadgeFormatBuilder;
 import io.github.dsibilio.badgemaker.core.BadgeMaker;
 import io.github.dsibilio.badgemaker.model.BadgeFormat;
 import io.github.dsibilio.badgemaker.model.NamedColor;
-import java.io.IOException;
 import java.util.Optional;
-import java.util.function.Function;
 import org.alfresco.badges.model.GHIssueState;
 import org.alfresco.badges.model.GithubPullRequest;
 import org.alfresco.badges.model.PullRequestStatus;
-import org.alfresco.badges.models.PullRequestSimple;
+import org.alfresco.badges.models.IssueSearchResultItem;
 import org.alfresco.badges.models.WorkflowRun;
 import org.alfresco.badges.service.api.PullRequestService;
 import org.alfresco.badges.web.client.api.GitHubWebClient;
@@ -33,9 +31,10 @@ public class PullRequestServiceImpl implements PullRequestService {
 
   @Override
   public Mono<String> getPullRequestStatus(String owner, String repository, String pattern,
-      String user, PrField field) {
+                                           String user, PrField field) {
     return getPullRequestStatus(owner, repository, user, pattern)
-         .map(this::buildBadge);
+        .map(this::buildBadge)
+        .next();
   }
 
   private String buildBadge(GithubPullRequest githubPullRequest) {
@@ -49,50 +48,46 @@ public class PullRequestServiceImpl implements PullRequestService {
     return BadgeMaker.makeBadge(badgeFormat);
   }
 
-  public Mono<GithubPullRequest> getPullRequestStatus(String owner,String repository, String user, String filter)  {
+  public Flux<GithubPullRequest> getPullRequestStatus(String owner, String repository, String user, String filter) {
 
     return getLastPullRequestToProcess(owner, repository, user, filter)
-        .map(processDataAndBuildResponse(owner,repository))
-        .singleOrEmpty(); //TODO was findFirst
-
+        .flatMap(issue -> processDataAndBuildResponse(issue, owner, repository));
   }
 
-  private Function<PullRequestSimple, GithubPullRequest> processDataAndBuildResponse(String owner, String repository) {
-    return pr -> {
-      GithubPullRequest githubPullRequest = new GithubPullRequest();
-      githubPullRequest.setTitle(pr.getTitle());
-      githubPullRequest.setDescription(pr.getBody());
-      githubPullRequest.setURL(pr.getHtml_url().toString());
-      githubPullRequest.setMerged(pr.getMerged_at() != null);
-      String branch = pr.getHead().getRef();
-      Mono<Optional<WorkflowRun>> lastRunsFailedByPrNumber = getLastRunsByPrBranch(owner,repository, branch);
-      githubPullRequest.setPullRequestStatus(PullRequestStatus.UNKNOWN);
-      lastRunsFailedByPrNumber
-              .subscribe(wr ->
-                  wr.ifPresentOrElse(
-                      ghWorkflowRun -> computeStatus(githubPullRequest, ghWorkflowRun, pr),
-                      () -> githubPullRequest.setPullRequestStatus(PullRequestStatus.UNKNOWN))
-              );
-      return githubPullRequest;
-    };
+  private Flux<GithubPullRequest> processDataAndBuildResponse(IssueSearchResultItem issue, String owner, String repository) {
+    GithubPullRequest githubPullRequest = new GithubPullRequest();
+    githubPullRequest.setTitle(issue.getTitle());
+    githubPullRequest.setDescription(issue.getBody());
+    githubPullRequest.setURL(issue.getPull_request().getHtml_url().toString());
+    githubPullRequest.setMerged(issue.getPull_request().getMerged_at() != null);
+    return gitHubWebClient
+        .getPullRequest(issue.getPull_request().getUrl())
+        .flatMap(pr -> {
+          String branch = pr.getHead().getRef();
+          githubPullRequest.setPullRequestStatus(PullRequestStatus.UNKNOWN);
+          return getLastRunsByPrBranch(owner, repository, branch);
+        })
+        .map(wr -> {
+               wr.ifPresentOrElse(
+                   ghWorkflowRun -> computeStatus(githubPullRequest, ghWorkflowRun, issue),
+                   () -> githubPullRequest.setPullRequestStatus(PullRequestStatus.UNKNOWN));
+               return githubPullRequest;
+             }
+            );
   }
 
   private Mono<Optional<WorkflowRun>> getLastRunsByPrBranch(String owner, String repository, String branch) {
-    return gitHubWebClient.getWorkflowRunsForARepository(owner,repository,branch)
+    return gitHubWebClient.getWorkflowRunsForARepository(owner, repository, branch)
         .map(wr -> wr.getWorkflow_runs().stream().findFirst())
-        .single(); //
+        .single(); 
   }
 
-  private Flux<PullRequestSimple> getLastPullRequestToProcess(String owner,String repository, String user, String filter)  {
+  private Flux<IssueSearchResultItem> getLastPullRequestToProcess(String owner, String repository, String user, String filter) {
     return
-      gitHubWebClient.getPullRequests(owner, repository, user,
-            GHIssueState.OPEN.value())
-        .switchIfEmpty(gitHubWebClient.getPullRequests(owner, repository, user,
-            GHIssueState.CLOSED.value()))
-        .filter(pr -> pr.getTitle().startsWith(filter));
+        gitHubWebClient.getIssuePullRequests(owner, repository, user, filter, GHIssueState.CLOSED.value());
   }
 
-  private void computeStatus(GithubPullRequest githubPullRequest, WorkflowRun ghWorkflowRun, PullRequestSimple pr) {
+  private void computeStatus(GithubPullRequest githubPullRequest, WorkflowRun ghWorkflowRun, IssueSearchResultItem pr) {
     if (isClosedWithoutMerging(pr)) {
       githubPullRequest.setPullRequestStatus(PullRequestStatus.MERGED);
     } else if (isMergedEvenIfItIsFailed(githubPullRequest, ghWorkflowRun)) {
@@ -116,8 +111,8 @@ public class PullRequestServiceImpl implements PullRequestService {
     return ghWorkflowRun.getStatus().equals("completed") && ghWorkflowRun.getConclusion().equals("failure") && githubPullRequest.getMerged();
   }
 
-  private boolean isClosedWithoutMerging(PullRequestSimple pr) {
-      return pr.getMerged_at()==null && pr.getState().equals(GHIssueState.CLOSED);
+  private boolean isClosedWithoutMerging(IssueSearchResultItem pr) {
+    return pr.getPull_request().getMerged_at() == null && pr.getState().equals(GHIssueState.CLOSED);
   }
 
 }
