@@ -1,3 +1,3 @@
 github:
-  token: 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
+  token: <my-github-PAT>
   cacheDuration: 60S
