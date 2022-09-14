@@ -18,10 +18,9 @@ public class WebClientsConfig {
   @Bean
   public WebClient githubWebClient() {
     return WebClient.builder()
-        .baseUrl("https://api.github.com/repos")
+        .baseUrl("https://api.github.com")
         .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(16 * 1024 * 1024))
         .defaultHeaders(headers -> headers.setBearerAuth(gitHubProperties.getToken()))
         .build();
   }
-
 }
