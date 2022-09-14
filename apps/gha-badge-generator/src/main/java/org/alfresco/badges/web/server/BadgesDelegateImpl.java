@@ -70,6 +70,7 @@ public class BadgesDelegateImpl implements BadgesApiDelegate {
   }
 
   private static Mono getErrorView(Exception ex) {
+    ex.printStackTrace();
     return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                          .contentType(MediaType.TEXT_PLAIN)
                          .body(new ByteArrayResource(ex.getMessage().getBytes())));

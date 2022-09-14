@@ -2,14 +2,14 @@ package org.alfresco.badges.model;
 
 public class GithubPullRequest {
 
-  private String name;
+  private String title;
   private String description;
   private String url;
   private PullRequestStatus pullRequestStatus;
   private Boolean merged;
 
-  public GithubPullRequest(String name, String description, String url, PullRequestStatus pullRequestStatus) {
-    this.name = name;
+  public GithubPullRequest(String title, String description, String url, PullRequestStatus pullRequestStatus) {
+    this.title = title;
     this.description = description;
     this.url = url;
     this.pullRequestStatus = pullRequestStatus;
@@ -23,12 +23,12 @@ public class GithubPullRequest {
     return new GithubPullRequest("Undefined", "Undefined", "https://www.github.com", PullRequestStatus.UNKNOWN);
   }
 
-  public String getName() {
-    return name;
+  public String getTitle() {
+    return title;
   }
 
   public void setTitle(String name) {
-    this.name = name;
+    this.title = name;
   }
 
   public String getDescription() {

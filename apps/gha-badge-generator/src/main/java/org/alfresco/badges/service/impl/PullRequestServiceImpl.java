@@ -8,7 +8,6 @@ import java.util.Optional;
 import org.alfresco.badges.model.GithubPullRequest;
 import org.alfresco.badges.model.PullRequestStatus;
 import org.alfresco.badges.models.IssueSearchResultItem;
-import org.alfresco.badges.models.PullRequest;
 import org.alfresco.badges.models.PullRequest.State;
 import org.alfresco.badges.models.WorkflowRun;
 import org.alfresco.badges.service.api.PullRequestService;
@@ -34,7 +33,7 @@ public class PullRequestServiceImpl implements PullRequestService {
   public Mono<String> getPullRequestStatusBadge(String owner, String repository, String filter,
                                                 String user, PrField field) {
     return getPullRequestStatus(owner, repository, filter, user)
-        .map(this::buildBadge);
+        .map(gpr -> this.buildBadge(gpr, field));
   }
 
   @Override
@@ -44,8 +43,8 @@ public class PullRequestServiceImpl implements PullRequestService {
         .next();
   }
 
-  private String buildBadge(GithubPullRequest githubPullRequest) {
-    String message = Optional.ofNullable(githubPullRequest.getDescription()).orElse(githubPullRequest.getName());
+  private String buildBadge(GithubPullRequest githubPullRequest, PrField prField) {
+    String message = getMessage(githubPullRequest, prField);
     BadgeFormat badgeFormat = new BadgeFormatBuilder(message)
         .withLabelColor(NamedColor.GREY)
         .withMessageColor(githubPullRequest.getPullRequestStatus().getColor())
@@ -53,6 +52,14 @@ public class PullRequestServiceImpl implements PullRequestService {
         .build();
 
     return BadgeMaker.makeBadge(badgeFormat);
+  }
+
+  private String getMessage(GithubPullRequest githubPullRequest, PrField prField) {
+    if (PrField.DESCRIPTION.equals(prField)) {
+      return Optional.ofNullable(githubPullRequest.getDescription()).orElse(githubPullRequest.getTitle());
+    } else {
+      return githubPullRequest.getTitle();
+    }
   }
 
   private Flux<GithubPullRequest> processDataAndBuildResponse(IssueSearchResultItem issue, String owner, String repository) {
@@ -80,7 +87,7 @@ public class PullRequestServiceImpl implements PullRequestService {
   private Mono<Optional<WorkflowRun>> getLastRunsByPrBranch(String owner, String repository, String branch) {
     return gitHubWebClient.getWorkflowRunsForARepository(owner, repository, branch)
         .map(wr -> wr.getWorkflow_runs().stream().findFirst())
-        .single(); 
+        .single();
   }
 
   private Flux<IssueSearchResultItem> getLastPullRequestToProcess(String owner, String repository, String user, String filter) {
