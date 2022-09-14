@@ -44,6 +44,31 @@ The `workflowId` can either be the actual workflow id, or the name of the workfl
 The default branch is `master`, you can also specify a different branch as follows:
 `http://localhost:8080/badges/github/{owner}/{repository}/{workflowId}?branch=develop`
 
+### Generating a Dynamic GitHub Pull Request Badge
+
+`http://localhost:8080/badges/prurl/{owner}/{repository}?pattern=fix%28versions%29%3A%20update&user=alfresco-build&field=DESCRIPTION`
+
+Generates a badge that shows the status of the latest pull request containing the string in the pattern field and created by the user in user field. The field parameter indicates if the PR title or description must be shown in the badge.
+
+A successful request returns a badge with one of the following color:
+* ![#97ca00](https://via.placeholder.com/15/97ca00/97ca00.png) GREEN: success
+* ![#97ca00](https://via.placeholder.com/15/e05d44/e05d44.png) RED: build failed
+* ![#fe7d37](https://via.placeholder.com/15/fe7d37/fe7d37.png) ORANGE: build in progress
+* ![#dfb317](https://via.placeholder.com/15/dfb317/dfb317.png) YELLOW: merged with error or closed without merging
+* ![#9f9f9f](https://via.placeholder.com/15/9f9f9f/9f9f9f.png) LIGHT GREY: build cancelled
+* ![#555](https://via.placeholder.com/15/555/555.png) GREY: status unknown
+
+### Generating a Dynamic GitHub Pull Request Redirect URL
+
+`http://localhost:8080/badges/prurl/{owner}/{repository}?pattern=fix%28versions%29%3A%20update&user=alfresco-build`
+
+Redirect the request to the latest pull request containing the string in the pattern field and created by the user in user field. The field parameter indicates if the PR title or description must be shown in the badge.
+
+This API must be used with previous API in order to redirect the user to the right PR when clicking on the badge, so it must have the same parameters, eg:
+
+`
+[![prstatus](http://.../badges/prstatus/Activiti/activiti-cloud?pattern=fix%28versions%29%3A%20update&user=alfresco-build&field=DESCRIPTION)](http://.../badges/prurl/Activiti/activiti-cloud?pattern=fix%28versions%29%3A%20update&user=alfresco-build&field=DESCRIPTION)`
+
 ## Testing
 
 Run the Unit Tests with `mvnw verify`. 
