@@ -5,10 +5,11 @@ import io.github.dsibilio.badgemaker.core.BadgeMaker;
 import io.github.dsibilio.badgemaker.model.BadgeFormat;
 import io.github.dsibilio.badgemaker.model.NamedColor;
 import java.util.Optional;
-import org.alfresco.badges.model.GHIssueState;
 import org.alfresco.badges.model.GithubPullRequest;
 import org.alfresco.badges.model.PullRequestStatus;
 import org.alfresco.badges.models.IssueSearchResultItem;
+import org.alfresco.badges.models.PullRequest;
+import org.alfresco.badges.models.PullRequest.State;
 import org.alfresco.badges.models.WorkflowRun;
 import org.alfresco.badges.service.api.PullRequestService;
 import org.alfresco.badges.web.client.api.GitHubWebClient;
@@ -30,10 +31,16 @@ public class PullRequestServiceImpl implements PullRequestService {
 
 
   @Override
-  public Mono<String> getPullRequestStatus(String owner, String repository, String pattern,
-                                           String user, PrField field) {
-    return getPullRequestStatus(owner, repository, user, pattern)
-        .map(this::buildBadge)
+  public Mono<String> getPullRequestStatusBadge(String owner, String repository, String filter,
+                                                String user, PrField field) {
+    return getPullRequestStatus(owner, repository, filter, user)
+        .map(this::buildBadge);
+  }
+
+  @Override
+  public Mono<GithubPullRequest> getPullRequestStatus(String owner, String repository, String filter, String user) {
+    return getLastPullRequestToProcess(owner, repository, user, filter)
+        .flatMap(issue -> processDataAndBuildResponse(issue, owner, repository))
         .next();
   }
 
@@ -46,12 +53,6 @@ public class PullRequestServiceImpl implements PullRequestService {
         .build();
 
     return BadgeMaker.makeBadge(badgeFormat);
-  }
-
-  public Flux<GithubPullRequest> getPullRequestStatus(String owner, String repository, String user, String filter) {
-
-    return getLastPullRequestToProcess(owner, repository, user, filter)
-        .flatMap(issue -> processDataAndBuildResponse(issue, owner, repository));
   }
 
   private Flux<GithubPullRequest> processDataAndBuildResponse(IssueSearchResultItem issue, String owner, String repository) {
@@ -84,7 +85,7 @@ public class PullRequestServiceImpl implements PullRequestService {
 
   private Flux<IssueSearchResultItem> getLastPullRequestToProcess(String owner, String repository, String user, String filter) {
     return
-        gitHubWebClient.getIssuePullRequests(owner, repository, user, filter, GHIssueState.CLOSED.value());
+        gitHubWebClient.getIssuePullRequests(owner, repository, user, filter, State.closed.value());
   }
 
   private void computeStatus(GithubPullRequest githubPullRequest, WorkflowRun ghWorkflowRun, IssueSearchResultItem pr) {
@@ -112,7 +113,7 @@ public class PullRequestServiceImpl implements PullRequestService {
   }
 
   private boolean isClosedWithoutMerging(IssueSearchResultItem pr) {
-    return pr.getPull_request().getMerged_at() == null && pr.getState().equals(GHIssueState.CLOSED);
+    return pr.getPull_request().getMerged_at() == null && pr.getState().equalsIgnoreCase(State.closed.toString());
   }
 
 }

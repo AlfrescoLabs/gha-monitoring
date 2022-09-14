@@ -1,5 +1,6 @@
 package org.alfresco.badges.web.server;
 
+import java.net.URI;
 import org.alfresco.badges.service.api.BadgeService;
 import org.alfresco.badges.service.api.PullRequestService;
 import org.alfresco.badges.web.server.api.BadgesApiDelegate;
@@ -30,20 +31,32 @@ public class BadgesDelegateImpl implements BadgesApiDelegate {
   public Mono<ResponseEntity<Resource>> getBadge(String message, String label, NamedColor messageColor,
                                                  NamedColor labelColor, String logo, ServerWebExchange exchange) {
     return withErrorHandling(badgeService.getBadge(message, label, messageColor, labelColor, logo)
-        .map(this::getResponse));
+                                 .map(this::getResponse));
   }
 
   @Override
   public Mono<ResponseEntity<Resource>> getGitHubWorkflowBadge(String owner, String repository, String workflowId,
                                                                String branch, String label, ServerWebExchange exchange) {
     return withErrorHandling(badgeService.getWorkflowBadge(owner, repository, workflowId, branch, label)
-        .map(this::getResponse));
-  }
-  
-  @Override
-  public Mono<ResponseEntity<Resource>> getPrStatus(String owner, String repository, String pattern, String user, PrField field, ServerWebExchange exchange) {
-    return withErrorHandling(pullRequestService.getPullRequestStatus(owner, repository, pattern, user, field)
                                  .map(this::getResponse));
+  }
+
+  @Override
+  public Mono<ResponseEntity<Resource>> getPrStatus(String owner, String repository, String filter, String user, PrField field, ServerWebExchange exchange) {
+    return withErrorHandling(pullRequestService.getPullRequestStatusBadge(owner, repository, filter, user, field)
+                                 .map(this::getResponse));
+  }
+
+  @Override
+  public Mono<ResponseEntity<Void>> getPrRedirectUrl(String owner, String repository, String filter, String user, ServerWebExchange exchange) {
+    return withErrorHandling(pullRequestService.getPullRequestStatus(owner, repository, filter, user)
+                                 .map(pr -> this.redirect(pr.getURL())));
+  }
+
+  private ResponseEntity<Void> redirect(String url) {
+    return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
+        .location(URI.create(url))
+        .build();
   }
 
   private ResponseEntity<Resource> getResponse(String badge) {
@@ -52,14 +65,14 @@ public class BadgesDelegateImpl implements BadgesApiDelegate {
         .body(new ByteArrayResource(badge.getBytes()));
   }
 
-  private static Mono<ResponseEntity<Resource>> withErrorHandling(Mono<ResponseEntity<Resource>> mono) {
+  private static <T> Mono<ResponseEntity<T>> withErrorHandling(Mono<ResponseEntity<T>> mono) {
     return mono.onErrorResume(Exception.class, BadgesDelegateImpl::getErrorView);
   }
 
-  private static Mono<ResponseEntity<Resource>> getErrorView(Exception ex) {
+  private static Mono getErrorView(Exception ex) {
     return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .contentType(MediaType.TEXT_PLAIN)
-        .body(new ByteArrayResource(ex.getMessage().getBytes())));
+                         .contentType(MediaType.TEXT_PLAIN)
+                         .body(new ByteArrayResource(ex.getMessage().getBytes())));
   }
 
 }
