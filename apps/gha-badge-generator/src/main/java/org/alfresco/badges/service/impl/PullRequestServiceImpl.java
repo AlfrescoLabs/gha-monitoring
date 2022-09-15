@@ -91,8 +91,8 @@ public class PullRequestServiceImpl implements PullRequestService {
   }
 
   private Flux<IssueSearchResultItem> getLastPullRequestToProcess(String owner, String repository, String user, String filter) {
-    return
-        gitHubWebClient.getIssuePullRequests(owner, repository, user, filter, State.closed.value());
+    return gitHubWebClient.getIssuePullRequests(owner, repository, user, filter, State.open.value())
+        .switchIfEmpty(gitHubWebClient.getIssuePullRequests(owner, repository, user, filter, State.closed.value()));
   }
 
   private void computeStatus(GithubPullRequest githubPullRequest, WorkflowRun ghWorkflowRun, IssueSearchResultItem pr) {
