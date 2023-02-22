@@ -18,7 +18,8 @@ export class AppComponent implements OnInit{
     'alfresco-enterprise-repo',
     'alfresco-enterprise-share',
     'acs-packaging',
-    'acs-community-packaging'
+    'acs-community-packaging',
+    'alfresco-elasticsearch-connector'
   ];
 
   constructor(private activeRepositoriesService: ActiveRepositoriesService) {
