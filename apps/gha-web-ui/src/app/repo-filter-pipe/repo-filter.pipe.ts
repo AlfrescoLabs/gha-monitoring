@@ -13,8 +13,12 @@ export class RepoFilterPipe implements PipeTransform {
       return repos;
 
     return repos.filter(repo => {
-      return this.matchesFilter(repo, filter.toLowerCase());
+      return this.matchesAllPartsOfFilter(repo, filter.toLowerCase());
     });
+  }
+
+  private matchesAllPartsOfFilter(repo: Repo, filter: string): boolean {
+    return filter.split(' ').every(part => this.matchesFilter(repo, part));
   }
 
   private matchesFilter(repo: Repo, filter: string): boolean {
